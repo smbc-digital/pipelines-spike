@@ -6,8 +6,13 @@ COMMITMESSAGE="feature(Blah): blah"
 version="1"
 
 getVersionFromFile() {
-    currentVersion=$1
-    version="4000"
+    while IFS= read -r line
+    do
+        if [[ $line =~ "version" ]]
+        then
+            version="${line//[!0-9.!0-9.!0-9]/}"
+        fi
+    done < $FILEPATH
 }
 
 incrementMajor() {
@@ -28,9 +33,13 @@ incrementPatch() {
 incrementVersion() {
     currentVersion=$1
     commitMessage=$2
+
+    switch($commitMessage):
+    # switch on commitmessage contains feat() run incrementMinor etc. etc.
+
     version="4000"
 }
 
-incrementVersion "TEST" "TEST"
+getVersionFromFile
 
-echo "$VERSION"
+echo "Current version: $version"
