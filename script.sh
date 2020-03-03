@@ -2,8 +2,13 @@
 
 # TODO:: get from command line args
 FILEPATH="./package.json"
-COMMITMESSAGE="feature(Blah): blah"
-version="1"
+# TODO:: make work with list of messages
+COMMITMESSAGE="major(Blah): blah"
+
+version=0
+major=0
+minor=0
+patch=0
 
 getVersionFromFile() {
     while IFS= read -r line
@@ -13,33 +18,57 @@ getVersionFromFile() {
             version="${line//[!0-9.!0-9.!0-9]/}"
         fi
     done < $FILEPATH
+
+    regexp="([0-9]{0,})[.]([0-9]{0,})[.]([0-9]{0,})"
+    if [[ $version =~ $regexp ]]; then
+        major=${BASH_REMATCH[1]}
+        minor=${BASH_REMATCH[2]}
+        patch=${BASH_REMATCH[3]}
+    fi
 }
 
 incrementMajor() {
-    currentVersion=$1
-    version="4000"
+    major=$(($major + 1))
+    minor=0
+    patch=0
+    version="$major.$minor.$patch"
 }
 
 incrementMinor() {
-    currentVersion=$1
-    version="4000"
+    minor=$(($minor + 1))
+    patch=0
+    version="$major.$minor.$patch"
 }
 
 incrementPatch() {
-    currentVersion=$1
-    version="4000"
+    patch=$(($patch + 1))
+    version="$major.$minor.$patch"
 }
 
 incrementVersion() {
     currentVersion=$1
     commitMessage=$2
 
-    switch($commitMessage):
-    # switch on commitmessage contains feat() run incrementMinor etc. etc.
+    regexp="([A-Za-z]{0,})\("
+    if [[ $commitMessage =~ $regexp ]]; then
+        type=${BASH_REMATCH[1]}
 
-    version="4000"
+        case $type in
+            "fix")
+                incrementPatch
+                ;;
+            "feature")
+                incrementMinor
+                ;;
+            "major")
+                incrementMajor
+                ;;
+        esac
+    fi
 }
 
 getVersionFromFile
+incrementVersion $version $COMMITMESSAGE
 
 echo "Current version: $version"
+exit 1
