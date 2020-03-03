@@ -72,3 +72,5 @@ incrementVersion $version $COMMITMESSAGE
 
 echo "Current version: $version"
 exit 1
+
+#trest
