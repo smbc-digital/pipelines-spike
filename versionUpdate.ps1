@@ -4,16 +4,22 @@ $global:major=""
 $global:minor=""
 $global:patch=""
 $global:newVersion=""
+$global:content=""
 
 function getVersion { 
-    $content = Get-Content .\package.json -Raw | ConvertFrom-Json
-    $global:version = $content.version
+    $global:content = Get-Content .\package.json -Raw | ConvertFrom-Json
+    $global:version = $global:content.version
 
     $versionSplitted = $version.Split(".")
 
     $global:major = $versionSplitted[0]
     $global:minor = $versionSplitted[1]
     $global:patch = $versionSplitted[2]
+}
+
+function writeToFile {
+    $global:content.version = $global:newVersion
+    $global:content | ConvertTo-Json | set-content .\package.json
 }
 
 function print {
@@ -61,6 +67,5 @@ function incrementVersion {
 
 getVersion
 print
-incrementMajor
-incrementMinor
-incrementPatch
+incrementVersion
+writeToFile
