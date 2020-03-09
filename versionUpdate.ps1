@@ -33,22 +33,22 @@ function incrementMajor {
     $major=[int]$major+1
     $minor=0
     $patch=0
-    $newVersion="$major.$minor.$patch"
+    $global:newVersion="$major.$minor.$patch"
 
-    Write-Output "When I incrementMajor, the new version is: $newVersion"
+    Write-Output "When I incrementMajor, the new version is: $global:newVersion"
 }
 
 function incrementMinor {
     $minor=[int]$minor+1
     $patch=0
-    $newVersion="$major.$minor.$patch"
+    $global:newVersion="$major.$minor.$patch"
 
     Write-Output "When I incrementMinor, the new version is: $newVersion"
 }
 
 function incrementPatch {
     $patch=[int]$patch + 1
-    $newVersion="$major.$minor.$patch"
+    $global:newVersion="$major.$minor.$patch"
 
     Write-Output "When I incrementPatch, the new version is: $newVersion"
 }
