@@ -1,4 +1,4 @@
-﻿$commitMessage = "feat(test): This is a feature"
+﻿$commitMessage = "major(test): This is a feature"
 $global:version=""
 $global:major=""
 $global:minor=""
@@ -22,6 +22,16 @@ function writeToFile {
     $global:content | ConvertTo-Json | set-content .\package.json
 }
 
+function checkIfWriteSuccessful {
+    getVersion
+    if($global:version -eq $global:newVersion) {
+        Write-Output "Write to file success"
+    }
+    else {
+        Write-Error "Write to file failure"
+    }
+}
+
 function print {
     Write-Output "Version from json: $version"
     Write-Output "major: $major"
@@ -43,14 +53,14 @@ function incrementMinor {
     $patch=0
     $global:newVersion="$major.$minor.$patch"
 
-    Write-Output "When I incrementMinor, the new version is: $newVersion"
+    Write-Output "When I incrementMinor, the new version is: $global:newVersion"
 }
 
 function incrementPatch {
     $patch=[int]$patch + 1
     $global:newVersion="$major.$minor.$patch"
 
-    Write-Output "When I incrementPatch, the new version is: $newVersion"
+    Write-Output "When I incrementPatch, the new version is: $global:newVersion"
 }
 
 function incrementVersion {
@@ -60,7 +70,7 @@ function incrementVersion {
     if($commitMessage.StartsWith("feat(")) {
         incrementMinor
     }
-    if($commitMessage.StartsWith("fix(")) {
+    if($commitMessage.StartsWith("fix(") -or $commitMessage.StartsWith("chore(")) {
         incrementPatch
     }
 }
@@ -69,3 +79,4 @@ getVersion
 print
 incrementVersion
 writeToFile
+checkIfWriteSuccessful
